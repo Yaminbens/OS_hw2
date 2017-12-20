@@ -10,6 +10,13 @@
 #include <list>
 #include <string>
 #include <sstream>
+#include <pthread.h>
+//#include <chrono>
+#include "unistd.h"
+#include <math.h>
+
+#include <iomanip>
+#include <cstdlib>
 
 using namespace std;
 
@@ -19,7 +26,7 @@ using namespace std;
 #define success 0
 #define passwordError 1
 #define balanceError 2
-#define withdraw_or_deposit_error 3
+#define withdrawDepositError 3
 
 
 class bank {
@@ -28,31 +35,37 @@ private:
 	locker bankLocker;
 
 	logs log;
-	bool finished;
 
 public:
 	bank()
 	{
-		Account bankAccount(0, 0, 0, true); // saves money for the bank ///MAYA: right values?
+		Account bankAccount(0, 0, 0, true); // money for the bank ///MAYA: right values??
 	}
 	~bank(){}
-
-	int takeCommission ();
 
 	list<Account>::iterator iter(const int index);
 	int getIdx(const int ID);
 	int newAccount(const int ATM_ID, const int ID, const int password, const int amount, const bool VIP);
-	int transation (const int src, int &balance1, const int dest,  int &balance2, const int password, const int ID, const int ampunt);
+	int transaction (const int src, int &srcBalance, const int dest,  int &dstBalance, const int password, const int ATM_ID, const int amount);
 
 
-	int deposit (const int ID, const int password, const int amount, int &sum, const int id);
-	int withdraw (const int ID, const int password, const int amount, int &balance, int id);
-	int getBalance (const int ID, const int password, int& outBalance, int id);
-	int upgrade (const int ID, const int password);
+	int deposit (const int ATM_ID, const int password, const int amount, int &sum, const int ID);
+	int withdraw (const int ATM_ID, const int password, const int amount, int &balance, int ID);
+	int getBalance (const int ATM_ID, const int password, int& outBalance, int ID);
+	int upgrade (const int ATM_ID, const int ID, const int password);
 
 	int accountError1(const int ID);
 	int accountError2(const int ID1, const int ID2);
+	int accountError3(const int ATM_ID, const int ID);
 
+	void takeCommission ();
+	void bExec(int ATM_ID, string cmd);
+
+	void printStatus();
+	static void* commForThread(void* input);
+	static void* statusForThread(void* input);
+
+	bool finishedFlag;
 };
 
 

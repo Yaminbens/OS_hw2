@@ -10,6 +10,8 @@
 void logs::writeLog(string str)
 {
 	logLocker.write();
+
 	log << str << endl;
+
 	logLocker.writeStop();
 }

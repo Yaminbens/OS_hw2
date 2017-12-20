@@ -8,6 +8,7 @@
 #ifndef ACCOUNT_H_
 #define ACCOUNT_H_
 
+#include "locker.h"
 
 class Account {
 private:
@@ -36,12 +37,13 @@ public:
 	int withdraw (const int amount, const int password);
 	bool checkBalance (const int password, int& balance);
 	bool setVIP (const int password);
+	bool setBalance (const int balance);
 
 /*
 	void deposit_for_bank(const int money_to_deposit);
-	void change_bank_balance(int balance);
-	Locks account_lock_; //!< Member variable "account_lock"
 */
+	locker accLocker;
+
 
 
 };

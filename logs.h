@@ -11,7 +11,7 @@
 #include "locker.h"
 #include <fstream>
 #include <string>
-#include <pthread.h>
+#include "pthread.h"
 #include <iostream>
 
 using namespace std;
