@@ -28,12 +28,13 @@ using namespace std;
 		int index = 0;
 	    list<Account>::iterator it;
 	    for( it = this->Accounts_.begin(); it != this->Accounts_.end(); it++) {
-	    	index+=1;
+
 	   		if(ID == it->getID())
 	        {
 	   			bankLocker.readStop();
 	            return index;
 	        }
+	   		index+=1;
 	    }
 		bankLocker.readStop();
 		return -1; // wasn't found
@@ -106,10 +107,17 @@ using namespace std;
 			list<Account>::iterator destItr = iter(dest);
 
 			int res = srcItr->withdraw(amount, password);
+			int destBalance = destItr->getBalance();
+			res = res * destItr->setBalance(destBalance+amount);
 			sleep(1);
 			switch (res)
 			{
 			case -1:
+				minListItr->accLocker.writeStop();
+				if (minIdx < maxIdx)
+				{
+					maxListItr->accLocker.writeStop();
+				}
 				return accountError3(ATM_ID, src);
 				break;
 			case 0:
@@ -146,10 +154,11 @@ using namespace std;
 		{
 			list<Account>::iterator it = iter(ID);
 			it->accLocker.write();
-			int res = it->depodit(amount, password);
+			bool res = it->depodit(amount, password);
 			sleep(1);
-			if (res == -1)
+			if (res == false)
 			{
+				it->accLocker.writeStop();
 				return accountError3(ATM_ID, ID);
 			}
 			else
@@ -183,6 +192,7 @@ using namespace std;
 			switch (res)
 			{
 			case -1:
+				it->accLocker.writeStop();
 				return accountError3(ATM_ID, ID);
 				break;
 			case 0:
@@ -218,6 +228,7 @@ using namespace std;
 			sleep(1);
 			if (res == false)
 			{
+				it->accLocker.readStop();
 				return accountError3(ATM_ID, ID);
 			}
 			else
@@ -246,6 +257,7 @@ using namespace std;
 			sleep(1);
 			if (res == false)
 			{
+				it->accLocker.writeStop();
 				return accountError3(ATM_ID, ID);
 			}
 			log.writeLog(toPrint);
