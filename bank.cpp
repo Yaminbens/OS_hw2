@@ -14,8 +14,10 @@ using namespace std;
 	list<Account>::iterator bank::iter(const int index)
 	{
 		list<Account>::iterator it = Accounts_.begin();
-		for (int i = 0; i < this->getIdx(index); i++) {
-			it++;
+		for( it = this->Accounts_.begin(); it != this->Accounts_.end(); it++) {
+			if(it->getID() == index){
+				return it;
+			}
 		}
 		return it;
 	}
@@ -25,15 +27,16 @@ using namespace std;
 		bankLocker.read();
 		int index = 0;
 	    list<Account>::iterator it;
-	    for( it = Accounts_.begin(); it != Accounts_.end(); it++)
+	    for( it = this->Accounts_.begin(); it != this->Accounts_.end(); it++) {
 	    	index+=1;
 	   		if(ID == it->getID())
 	        {
 	   			bankLocker.readStop();
 	            return index;
 	        }
-   			bankLocker.readStop();
-   			return -1; // wasn't found
+	    }
+		bankLocker.readStop();
+		return -1; // wasn't found
 	}
 
 	int bank::newAccount(const int ATM_ID, const int ID, const int password, const int amount, const bool VIP)
@@ -154,9 +157,9 @@ using namespace std;
 				int newBalance = it->getBalance();
 				toPrint = toString(ATM_ID) + ": Account " + toString(ID) + " new balance is " + toString(newBalance) + " after " + toString(amount) + " $ was deposited";
 			}
-		log.writeLog(toPrint);
-		it->accLocker.writeStop();
-		return res;
+			log.writeLog(toPrint);
+			it->accLocker.writeStop();
+			return res;
 		}
 	}
 
@@ -210,19 +213,19 @@ using namespace std;
 		else
 		{
 			list<Account>::iterator it = iter(ID);
-			it->accLocker.write();
+			it->accLocker.read();
 			int res = it->checkBalance(password, outBalance);
 			sleep(1);
-			if (res == -1)
+			if (res == false)
 			{
 				return accountError3(ATM_ID, ID);
 			}
 			else
 			{
-				toPrint = ": Account " + toString(ATM_ID) + " balance is " + toString(res);
+				toPrint =  toString(ATM_ID) + ": Account " + toString(ID) + " balance is " + toString(it->getBalance());
 			}
 		log.writeLog(toPrint);
-		it->accLocker.writeStop();
+		it->accLocker.readStop();
 		return res;
 		}
 	}
@@ -283,7 +286,7 @@ using namespace std;
 		while(finishedFlag == false)
 		{
 			Rand = (rand()%200 + 200)/100;
-			Accounts_.begin()->accLocker.write();
+			//Accounts_.begin()->accLocker.write();
 			for(list<Account>::iterator it = Accounts_.begin(); it!=Accounts_.end(); ++it)
 			{
 				if (it->getID() == -1) continue;
@@ -293,6 +296,7 @@ using namespace std;
 				string toPrint;
 				comm = roundf((it->getBalance()*Rand)/100);
 				int newBalance = it->getBalance()-comm;
+//				cout << "new balance" << newBalance << endl;
 				it->setBalance(newBalance);
 
 				Accounts_.begin()->setBalance(Accounts_.begin()->getBalance()+comm);
@@ -355,7 +359,7 @@ using namespace std;
 	{
 	    while (this->finishedFlag == 0)
 	    {
-	    	usleep(500000);  //MAYA: delete this??
+	    	sleep(0.5);  //MAYA: delete this??
 	        for(list<Account>::iterator it=Accounts_.begin(); it!=Accounts_.end(); ++it)
 	            it->accLocker.read();
 	        	cout << "\033[2J\033[1;1H";

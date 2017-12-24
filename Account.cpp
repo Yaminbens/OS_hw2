@@ -55,8 +55,9 @@
 
 	bool Account::setBalance (const int balance)
 	{
-		if (balance<0)
+		if (balance<0){
 			return false;
+		}
 		balance_ = balance;
 		return true;
 	}

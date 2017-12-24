@@ -30,7 +30,7 @@ using namespace std;
 
 
 class bank {
-private:
+public:
 	list<Account> Accounts_;
 	locker bankLocker;
 
@@ -39,7 +39,9 @@ private:
 public:
 	bank()
 	{
-		Account bankAccount(0, 0, 0, true); // money for the bank ///MAYA: right values??
+		Account bankAccount(0, 0, 0, true );
+		Accounts_.push_back(bankAccount);
+		finishedFlag = false;// money for the bank ///MAYA: right values??
 	}
 	~bank(){}
 
@@ -47,7 +49,6 @@ public:
 	int getIdx(const int ID);
 	int newAccount(const int ATM_ID, const int ID, const int password, const int amount, const bool VIP);
 	int transaction (const int src, int &srcBalance, const int dest,  int &dstBalance, const int password, const int ATM_ID, const int amount);
-
 
 	int deposit (const int ATM_ID, const int password, const int amount, int &sum, const int ID);
 	int withdraw (const int ATM_ID, const int password, const int amount, int &balance, int ID);

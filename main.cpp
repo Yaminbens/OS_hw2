@@ -6,9 +6,10 @@
 #include <pthread.h>
 #include <vector>
 
+#define MAXLINE 100
 using namespace std;
 
-int main(int ATMnum, char* input[])
+int main(int argc, char* input[])
 {
 
 //Break down input arguments to strings.
@@ -18,12 +19,16 @@ int main(int ATMnum, char* input[])
 	myBank.newAccount(1, 1234, 1155, 200, true);
 */
 
-    vector<string> cmds;
-
-    for(int i=1; i < ATMnum; i++)
-	{
-    	cmds.push_back(input[i]);
-	}
+//    vector<string> cmds;
+//    int ATMnum = atoi(input[1]);
+//    for(int i=1; i <= ATMnum; i++)
+//	{
+//    	char* dest[MAXLINE];
+//    	strcpy(dest,input[i+1]);
+//    	cmds.push_back(input[i+1]);
+//	}
+//	int ATMnum = atoi(input[1]);
+    std::vector<std::string> cmds(input + 1, input + argc);
 
     vector<Thread> args(atoi(cmds[0].c_str()));
 
@@ -33,7 +38,6 @@ int main(int ATMnum, char* input[])
      	args[i].id = (i+1);
      	args[i].src = cmds.at(i+1);
     }
-
 	pthread_t ATMs[atoi(cmds[0].c_str())];
 	pthread_t commThr;
 	pthread_t detailsThr;
@@ -52,9 +56,12 @@ int main(int ATMnum, char* input[])
     }
 
     myBank.finishedFlag = true;
+    pthread_join(commThr,NULL);
+
 
     pthread_join(detailsThr,NULL);
-    pthread_join(commThr,NULL);
+
+
 
 
 	return 0;

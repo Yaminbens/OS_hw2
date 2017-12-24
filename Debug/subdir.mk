@@ -10,6 +10,13 @@ CPP_SRCS += \
 ../logs.cpp \
 ../main.cpp 
 
+O_SRCS += \
+../Account.o \
+../bank.o \
+../locker.o \
+../logs.o \
+../main.o 
+
 OBJS += \
 ./Account.o \
 ./bank.o \

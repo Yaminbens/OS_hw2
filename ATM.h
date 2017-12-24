@@ -30,7 +30,7 @@ void atm(bank* myBank, string src, int id)
 	while (getline(commands, toDo))
 	{
 		myBank->bExec(id, toDo);
-		sleep(100);
+		sleep(0.1);
 	}
 	return;
 }

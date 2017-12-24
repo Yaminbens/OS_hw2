@@ -52,13 +52,13 @@ void locker::readStop()
 //there can only be one writer at a time
 void locker::write()
 {
-    pthread_mutex_lock(&readLock);
+    pthread_mutex_lock(&writeLock);
 }
 
 // writeStop is called when a writer wants to finish.
 //there can only be one writer at a time
 void locker::writeStop()
 {
-	pthread_mutex_unlock(&readLock);
+	pthread_mutex_unlock(&writeLock);
 }
 
