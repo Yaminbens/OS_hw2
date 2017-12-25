@@ -42,18 +42,21 @@ using namespace std;
 
 	int bank::newAccount(const int ATM_ID, const int ID, const int password, const int amount, const bool VIP)
 	{
+		bankLocker.write();
 		if(amount < 0 )
 	    {
+   			bankLocker.writeStop();
 	        return balanceError;
 	    }
 		else if (this->getIdx(ID) > -1 ) //found the same ID
 		{
+   			bankLocker.writeStop();
 	        return accountError1(ID);
 	    }
 		else // valid parameters
 		{
 			Account account(ID, password, amount,VIP);
-   			bankLocker.write();
+//   			bankLocker.write();
    			sleep(1);
 			string toPrint;
 			toPrint = toString(ATM_ID) + ": New account id is"+ toString(ID) + " with password " + toString(password) + " and initial balance " + toString(amount);
@@ -371,7 +374,7 @@ using namespace std;
 	{
 	    while (this->finishedFlag == 0)
 	    {
-	    	sleep(0.5);  //MAYA: delete this??
+	    	sleep(0.1);  //MAYA: delete this??
 	        for(list<Account>::iterator it=Accounts_.begin(); it!=Accounts_.end(); ++it)
 	            it->accLocker.read();
 	        	cout << "\033[2J\033[1;1H";
